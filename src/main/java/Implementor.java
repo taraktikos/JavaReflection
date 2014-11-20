@@ -13,9 +13,11 @@ public class Implementor {
                 "\t\treturn @default\n" +
             "\t}\n";
 
-    public Implementor(Class cl) {
+    public Implementor(Class cl) throws RuntimeException{
         classEntity = cl;
-        System.out.println(p.matcher(cl.getName()).replaceAll(""));
+        if (Modifier.isFinal(cl.getModifiers())) {
+            throw new RuntimeException("Class is final");
+        }
     }
 
     public void print() {
@@ -32,7 +34,10 @@ public class Implementor {
             constructor -> p.matcher(constructor.toString()).replaceAll("")
         );
 
-        for (Method method: classEntity.getMethods()) {
+        for (Method method: classEntity.getDeclaredMethods()) {
+            if (Modifier.isPrivate(method.getModifiers())) {
+                continue;
+            }
             String methodString = methodTemplate;
             methodString = methodString.replace("@name", method.getName());
             result.append(methodString);
