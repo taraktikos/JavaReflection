@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -49,6 +53,18 @@ public class Implementor {
         }
         result.append("}");
         System.out.println(result);
-       // System.out.println(methodTemplate);
+
+        PrintWriter writer = null;
+        try {
+            String path = "./target/" + className + "Impl.java";
+            File f = new File(path);
+            f.createNewFile();
+            writer = new PrintWriter(path);
+            writer.print(result);
+            writer.flush();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 }
