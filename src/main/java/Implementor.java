@@ -40,6 +40,10 @@ public class Implementor {
         }
     }
 
+    private String correctTypeString(Type type) {
+        return ((Class) (type)).getCanonicalName();
+    }
+
     private String generateMethod(Method method) {
         StringBuilder result = new StringBuilder();
         result.append("\t");
@@ -50,13 +54,13 @@ public class Implementor {
             typeParameters += " ";
         }
         result.append(typeParameters);
-        result.append(method.getGenericReturnType().toString().replace("[Ljava.lang.Object;", "java.lang.Object[]").replace("class ", ""));
+        result.append(correctTypeString(method.getGenericReturnType()));
         result.append(" ");
         result.append(method.getName());
         result.append("(");
         Type[] types = method.getGenericParameterTypes();
         for (int i = 0; i < types.length; i++) {
-            result.append(types[i].toString().replace("class ", ""));
+            result.append(correctTypeString(types[i]));
             result.append(" arg");
             result.append(i);
             if (i != types.length - 1) {
