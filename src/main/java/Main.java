@@ -2,7 +2,7 @@
 public class Main {
 
     public static void main(String[] args) {
-        String className = "java.util.List";
+        String className = "java.util.AbstractList";
         if (args.length > 0) {
             className = args[0];
         }
@@ -15,7 +15,7 @@ public class Main {
         }
         try {
             Implementor impl = new Implementor(c);
-            impl.generateClass();
+            impl.generateClass(true);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }

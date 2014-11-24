@@ -18,6 +18,7 @@ public class Implementor {
         generateClass(false);
     }
 
+    //todo implement out stream
     public void generateClass(boolean saveToFile) {
         TypeVariable[] typeVariables = classEntity.getTypeParameters();
         String newName = classEntity.getSimpleName() + "Impl";
@@ -82,8 +83,13 @@ public class Implementor {
         }
     }
 
+    //todo test
     private String correctTypeString(Type type) {
-        return ((Class) (type)).getCanonicalName();
+        if (type instanceof Class) {
+            return ((Class) (type)).getCanonicalName();
+        } else {
+            return type.toString();
+        }
     }
 
     private String generateMethod(Method method) {
