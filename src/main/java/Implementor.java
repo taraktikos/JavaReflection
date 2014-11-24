@@ -7,11 +7,52 @@ public class Implementor {
 
     private Class classEntity;
 
-
     public Implementor(Class cl) throws RuntimeException{
         classEntity = cl;
         if (Modifier.isFinal(cl.getModifiers())) {
             throw new RuntimeException("Class is final");
+        }
+    }
+
+    public void generateClass() {
+        generateClass(false);
+    }
+
+    public void generateClass(boolean saveToFile) {
+        TypeVariable[] typeVariables = classEntity.getTypeParameters();
+        String newName = classEntity.getSimpleName() + "Impl";
+        StringBuilder result = new StringBuilder("public class " + newName);
+        String types = parametersToString(typeVariables);
+        result.append(types);
+        result.append(" ");
+        result.append(classEntity.isInterface() ? "implements" : "extends");
+        result.append(" ");
+        result.append(classEntity.getCanonicalName());
+        result.append(types);
+        result.append(" {\n");
+
+        HashSet<Method> methods = new HashSet<>();
+        addAllMethods(classEntity, methods);
+
+        for (Method method: methods) {
+            result.append(generateMethod(method));
+        }
+
+        result.append("}");
+        if (saveToFile) {
+            PrintWriter writer = null;
+            try {
+                writer = new PrintWriter("./" + classEntity.getSimpleName() + "Impl.java");
+                writer.print(result);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+        } else {
+            System.out.println(result);
         }
     }
 
@@ -29,6 +70,7 @@ public class Implementor {
         }
         return result.toString();
     }
+
     private void addAllMethods(Class<?> baseClass, HashSet<Method> methods) {
         for (Method method: baseClass.getDeclaredMethods()) {
             if (Modifier.isAbstract(method.getModifiers())) {
@@ -93,48 +135,5 @@ public class Implementor {
         result.append(";");
         result.append("\n\t}\n");
         return result.toString();
-    }
-
-    public void generateClass() {
-        generateClass(false);
-    }
-
-    public void generateClass(boolean saveToFile) {
-        TypeVariable[] typeVariables = classEntity.getTypeParameters();
-        String newName = classEntity.getSimpleName() + "Impl";
-        StringBuilder result = new StringBuilder("public class " + newName);
-        String types = parametersToString(typeVariables);
-        result.append(types);
-        result.append(" ");
-        result.append(classEntity.isInterface() ? "implements" : "extends");
-        result.append(" ");
-        result.append(classEntity.getCanonicalName());
-        result.append(types);
-        result.append(" {\n");
-
-        HashSet<Method> methods = new HashSet<>();
-        addAllMethods(classEntity, methods);
-
-        for (Method method: methods) {
-            result.append(generateMethod(method));
-        }
-
-        result.append("}");
-        if (saveToFile) {
-            PrintWriter writer = null;
-            try {
-                writer = new PrintWriter("./" + classEntity.getSimpleName() + "Impl.java");
-                writer.print(result);
-                //writer.flush();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        } else {
-            System.out.println(result);
-        }
     }
 }
