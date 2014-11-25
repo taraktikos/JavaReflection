@@ -1,8 +1,11 @@
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class Main {
 
-    public static void main(String[] args) {
-        String className = "java.util.AbstractList";
+    public static void main(String[] args) throws IOException{
+        String className = "java.util.List";
         if (args.length > 0) {
             className = args[0];
         }
@@ -13,9 +16,12 @@ public class Main {
             System.out.println("Class not found");
             return;
         }
-        try {
+        try (
+            OutputStream outputStream = new ByteArrayOutputStream()
+        ) {
             Implementor impl = new Implementor(c);
-            impl.generateClass(true);
+            impl.generateClass(outputStream);
+            System.out.println(outputStream.toString());
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }

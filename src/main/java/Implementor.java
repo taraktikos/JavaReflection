@@ -1,5 +1,5 @@
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.lang.reflect.*;
 import java.util.HashSet;
 
@@ -14,12 +14,7 @@ public class Implementor {
         }
     }
 
-    public void generateClass() {
-        generateClass(false);
-    }
-
-    //todo implement out stream
-    public void generateClass(boolean saveToFile) {
+    public void generateClass(OutputStream output) throws IOException{
         TypeVariable[] typeVariables = classEntity.getTypeParameters();
         String newName = classEntity.getSimpleName() + "Impl";
         StringBuilder result = new StringBuilder("public class " + newName);
@@ -34,27 +29,11 @@ public class Implementor {
 
         HashSet<Method> methods = new HashSet<>();
         addAllMethods(classEntity, methods);
-
+        output.write(result.toString().getBytes());
         for (Method method: methods) {
-            result.append(generateMethod(method));
+            output.write(generateMethod(method).getBytes());
         }
-
-        result.append("}");
-        if (saveToFile) {
-            PrintWriter writer = null;
-            try {
-                writer = new PrintWriter("./" + classEntity.getSimpleName() + "Impl.java");
-                writer.print(result);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        } else {
-            System.out.println(result);
-        }
+        output.write("}".getBytes());
     }
 
     private String parametersToString(TypeVariable[] typeVariables) {
@@ -83,8 +62,7 @@ public class Implementor {
         }
     }
 
-    //todo test
-    private String correctTypeString(Type type) {
+    String correctTypeString(Type type) {
         if (type instanceof Class) {
             return ((Class) (type)).getCanonicalName();
         } else {
