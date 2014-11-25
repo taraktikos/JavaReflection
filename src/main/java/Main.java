@@ -22,7 +22,7 @@ public class Main {
             Implementor impl = new Implementor(c);
             impl.generateClass(outputStream);
             System.out.println(outputStream.toString());
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
     }

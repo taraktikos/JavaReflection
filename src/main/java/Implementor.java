@@ -7,10 +7,10 @@ public class Implementor {
 
     private Class classEntity;
 
-    public Implementor(Class cl) throws RuntimeException{
+    public Implementor(Class cl) throws IllegalArgumentException{
         classEntity = cl;
         if (Modifier.isFinal(cl.getModifiers())) {
-            throw new RuntimeException("Class is final");
+            throw new IllegalArgumentException("Class is final");
         }
     }
 
